@@ -1,38 +1,161 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# ThreeJS Shaders
+
+An interactive collection of custom GLSL shader scenes built with Next.js, React Three Fiber, and Three.js.
+
+Live demo: https://three-js-shaders.vercel.app/
+
+## What This Project Includes
+
+- Custom vertex and fragment shaders for multiple visual scenes.
+- Real-time rendering with React Three Fiber.
+- Orbit camera controls for scene navigation.
+- A Leva control panel for tweaking uniforms in the Raging Sea demo.
+- Next.js App Router project structure.
+
+## Tech Stack
+
+- Next.js 13
+- React 18
+- Three.js
+- @react-three/fiber
+- @react-three/drei
+- Leva
+- Tailwind CSS
+
+## Project Structure
+
+```text
+app/
+	page.js                          # Main entry page; chooses which scene to render
+	layout.js                        # Root layout + metadata
+	globals.css                      # Global styles
+
+	Components/
+		Pattern/page.jsx               # Pattern shader scene
+		Plane/page.jsx                 # Blob-style animated shader on icosahedron
+		RagingSea/page.jsx             # Animated water shader + Leva controls
+
+		shaders/
+			Blob/
+				vertexShader.js
+				fragmentShader.js
+			Pattern/
+				vertexShader.js
+				fragmentShader.js
+			RagingSea/
+				vertexShader.js
+				fragmentShader.js
+```
 
 ## Getting Started
 
-First, run the development server:
+### 1. Install dependencies
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+If you prefer another package manager:
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+```bash
+npm install
+# or
+yarn install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### 2. Start the development server
 
-## Learn More
+```bash
+pnpm dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+Open http://localhost:3000.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Available Scripts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+```bash
+pnpm dev      # Start local dev server
+pnpm build    # Create production build
+pnpm start    # Run production server
+pnpm lint     # Run Next.js lint checks
+```
 
-## Deploy on Vercel
+## Switching Between Shader Scenes
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The homepage renders one scene at a time from `app/page.js`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
-# ThreeJS-Shaders
-It is a live link to experience it : https://three-js-shaders.vercel.app/
+Current setup renders `RagingSea` by default, while `Pattern` and `Plane` are commented out.
+
+To switch scenes:
+
+1. Open `app/page.js`.
+2. Uncomment the scene you want.
+3. Comment out the others.
+
+Example:
+
+```jsx
+// app/page.js
+import Plane from './Components/Plane/page'
+import Pattern from './Components/Pattern/page'
+import RagingSea from './Components/RagingSea/page'
+
+export default function Home() {
+	return (
+		<>
+			{/* <Pattern /> */}
+			{/* <Plane /> */}
+			<RagingSea />
+		</>
+	)
+}
+```
+
+## Shader Development Guide
+
+### Where to edit shaders
+
+- Blob scene shaders:
+	- `app/Components/shaders/Blob/vertexShader.js`
+	- `app/Components/shaders/Blob/fragmentShader.js`
+- Pattern scene shaders:
+	- `app/Components/shaders/Pattern/vertexShader.js`
+	- `app/Components/shaders/Pattern/fragmentShader.js`
+- Raging Sea shaders:
+	- `app/Components/shaders/RagingSea/vertexShader.js`
+	- `app/Components/shaders/RagingSea/fragmentShader.js`
+
+### Uniforms and animation
+
+- Time-based animations are updated with `useFrame` in each scene component.
+- Material uniforms are created with `useMemo` and passed into `<shaderMaterial />`.
+- The Raging Sea scene exposes key uniforms in Leva for live tuning:
+	- Wave elevation and frequency
+	- Wave speed
+	- Depth/surface colors
+	- Small-wave controls and iteration count
+
+## Deployment
+
+This project is ready for deployment on Vercel.
+
+Basic flow:
+
+1. Push this repository to GitHub.
+2. Import the repository into Vercel.
+3. Use the default Next.js settings.
+4. Deploy.
+
+## Troubleshooting
+
+- If the canvas is blank, verify that only one main scene is rendered in `app/page.js`.
+- If controls do not appear in Raging Sea, ensure `leva` is installed and imported.
+- If shader changes do not update, restart the dev server:
+
+```bash
+pnpm dev
+```
+
+## License
+
+No license file is currently defined in this repository. Add a `LICENSE` file if you plan to distribute or open-source this project publicly.
